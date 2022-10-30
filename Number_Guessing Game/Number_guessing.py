@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import random
 attempts_list = []
 def show_score():
@@ -5,12 +6,24 @@ def show_score():
         print("There is currently no high score, it's yours for the taking!")
     else:
         print("The current high score is {} attempts".format(min(attempts_list)))
+def check_yes_no(player_name):
+    wanna_play = ""
+    while True:
+        try:
+            wanna_play = input("\nHi, {}, would you like to play the guessing game? (Enter Yes/No) ".format(player_name))
+            if wanna_play.lower() == "yes" or wanna_play.lower() == "no":
+                return wanna_play
+            else:
+                raise ValueError("Please make a guess within the range.")
+        except ValueError as err:
+            print("Oh no! That is not a valid answer. Try again.")
+
 def start_game():
     random_number = int(random.randint(1, 10))
     print("Hello traveler! Welcome to the game of guesses!")
     player_name = input("What is your name? ")
-    wanna_play = input("Hi, {}, would you like to play the guessing game? (Enter Yes/No) ".format(player_name))
-    // Where the show_score function USED to be
+    wanna_play = check_yes_no(player_name)
+#    // Where the show_score function USED to be
     attempts = 0
     show_score()
     while wanna_play.lower() == "yes":
@@ -23,9 +36,9 @@ def start_game():
                 attempts += 1
                 attempts_list.append(attempts)
                 print("It took you {} attempts".format(attempts))
-                play_again = input("Would you like to play again? (Enter Yes/No) ")
                 attempts = 0
                 show_score()
+                play_again = check_yes_no(player_name)
                 random_number = int(random.randint(1, 10))
                 if play_again.lower() == "no":
                     print("That's cool, have a good one!")
